@@ -15,6 +15,7 @@ export default function Home() {
     link.rel = 'icon';
     link.href = favicon.src;
     document.head.appendChild(link);
+    document.title = "Marvel Voucher Customizer";
   }, []);
 
   return (
