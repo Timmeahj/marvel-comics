@@ -1,0 +1,6 @@
+@mixin skewTransform($degree) {
+    transform: skew($degree);
+    -o-transform: skew($degree);
+    -moz-transform: skew($degree);
+    -webkit-transform: skew($degree);
+}
