@@ -1,5 +1,6 @@
 import React from 'react';
 import Cta from '../atoms/Cta';
+import '../../styles/organisms/hero.scss';
 
 const Hero: React.FC = () => {
   return (

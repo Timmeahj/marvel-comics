@@ -1,7 +1,9 @@
 import React from 'react';
 import FooterLink from '../atoms/FooterLink';
+import '../../styles/organisms/footer.scss';
 
 const Footer: React.FC = () => {
+  {/* TODO refactor © */}
   const copy = "©"+new Date().getFullYear()+" MARVEL";
   return (
     <footer>

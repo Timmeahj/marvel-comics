@@ -1,5 +1,6 @@
 import React from 'react';
 import HeaderLink from '../atoms/HeaderLink';
+import '../../styles/molecules/navbar.scss';
 
 const Navbar: React.FC = () => {
   return (
