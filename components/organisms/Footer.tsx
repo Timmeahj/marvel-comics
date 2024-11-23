@@ -1,9 +1,41 @@
 import React from 'react';
+import FooterLink from '../atoms/FooterLink';
 
 const Footer: React.FC = () => {
+  const copy = "©"+new Date().getFullYear()+" MARVEL";
   return (
-    <footer style={{ textAlign: 'center', padding: '20px', background: '#f3f3f3' }}>
-      <p>&copy; {new Date().getFullYear()} Your Company. All Rights Reserved.</p>
+    <footer>
+      <nav>
+        <ul>
+          <li>
+            <FooterLink href="/" text="Terms of use" />
+          </li>
+          <li>
+            <FooterLink href="/" text="Privacy Policy" />
+          </li>
+          <li>
+            <FooterLink href="/" text="Your US State Privacy Rights" />
+          </li>
+          <li>
+            <FooterLink href="/" text="Do Not Sell or Share My Personal Information" />
+          </li>
+          <li>
+            <FooterLink href="/" text="Children's Online Privacy Policy" />
+          </li>
+          <li>
+            <FooterLink href="/" text="License Agreement" />
+          </li>
+          <li>
+            <FooterLink href="/" text="Interest-Based Ads" />
+          </li>
+          <li>
+            <FooterLink href="/" text="Marvel Insider Terms" />
+          </li>
+          <li>
+            <FooterLink href="/" text={copy} />
+          </li>
+        </ul>
+      </nav>
     </footer>
   );
 };
