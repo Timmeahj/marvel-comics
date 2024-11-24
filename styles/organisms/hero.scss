@@ -1,0 +1,34 @@
+@mixin skewTransform($degree) {
+    transform: skew($degree);
+    -o-transform: skew($degree);
+    -moz-transform: skew($degree);
+    -webkit-transform: skew($degree);
+}
+
+.hero{
+    background: url(https://cdn.marvel.com/u/prod/marvel/i/mg/8/e0/52bdf830aa094.jpg) no-repeat center center #0a1117;
+    height: 440px;
+    //TODO: find better fix for weird margin issue
+    margin-top: -16px;
+    .container{
+        height: 100%;
+    }
+    &__wrapper{
+        position: absolute;
+        height: 440px;
+        margin-top: -440px;
+        padding: 50px 100px;
+        width: 600px;
+        color: var(--text-secondary);
+        h1{
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+    }
+    &__skewbox{
+        height: 100%;
+        background: var(--bg-transparent);
+        width: 600px;
+        @include skewTransform(-11deg);
+    }
+}

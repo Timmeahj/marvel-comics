@@ -1,0 +1,22 @@
+.subscribe{
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    img{
+        padding: 10px;
+    }
+    &__link{
+        height: 50px;
+        display: flex;
+        text-decoration: none;
+        color: var(--text-secondary);
+        div{
+            text-align: center;
+        }
+    }
+    &__text{
+        padding: 10px;
+    }
+}

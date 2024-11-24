@@ -1,6 +1,6 @@
 :root {
   --bg-primary: #ffffff;
-  --bg-secondary: #151515;
+  --bg-secondary: #202020;
   --bg-tertiary: #e62429;
 
   --bg-transparent: rgba(15,15,15,.8);
@@ -12,4 +12,5 @@
 
 body {
   font-family: "Roboto","Trebuchet MS",Helvetica,Arial,sans-serif;
+  overflow-x: hidden;
 }

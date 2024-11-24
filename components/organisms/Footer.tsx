@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
   const copy = "©"+new Date().getFullYear()+" MARVEL";
   return (
     <footer>
-      <nav>
+      <nav className='container'>
         <ul>
           <li>
             <FooterLink href="/" text="Terms of use" />

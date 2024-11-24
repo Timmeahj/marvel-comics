@@ -4,3 +4,26 @@
     -moz-transform: skew($degree);
     -webkit-transform: skew($degree);
 }
+
+.cta{
+    height: 50px;
+    width: 170px;
+    &__skewbox{
+        @include skewTransform(-11deg);
+        background-color: var(--bg-tertiary);
+        height: 50px;
+        width: 170px;
+    }
+    &__text{
+        height: 50px;
+        width: 170px;
+        position: absolute;
+        margin-top: -50px;
+        color: var(--text-secondary);
+        text-align: center;
+        line-height: 50px;
+        text-transform: uppercase;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+}

@@ -1,0 +1,23 @@
+footer{
+    background: var(--bg-secondary);
+    font-size: 0.7rem;
+    text-transform: none;
+    font-weight: normal;
+    margin-bottom: -15px;
+    nav{
+        ul{
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            li{
+                margin: 10px 20px;
+                a{
+                    color: var(--text-tertiary);
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}
