@@ -1,3 +1,58 @@
+@mixin skewTransform($degree) {
+    transform: skew($degree);
+    -o-transform: skew($degree);
+    -moz-transform: skew($degree);
+    -webkit-transform: skew($degree);
+}
+
+@mixin drop-shadow($x: 0px, $y: 4px, $blur: 6px, $spread: 0px, $color: rgba(0, 0, 0, 0.2)) {
+    box-shadow: $x $y $blur $spread $color;
+    -webkit-box-shadow: $x $y $blur $spread $color; 
+    -moz-box-shadow: $x $y $blur $spread $color;    
+}
+
 .main{
+    padding-top: 50px;
     min-height: 80vh;
+    &__comic{
+        margin-bottom: 50px;
+        h2{
+            margin-bottom: 20px;
+        }
+        &__preview{
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            padding: 20px;
+            border-radius: 10px;
+            @include drop-shadow(5px, 5px, 10px, 2px, rgba(0, 0, 0, 0.3));
+            img{
+                width: 100%;
+                min-height: 100%;
+                object-fit: cover;
+            }
+            .image{
+                position: relative;
+            }
+            .title{
+                font-size: 1.4rem;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            .fillable{
+                padding-left: 20px;
+                margin-top: 20px;
+                border-bottom: 1px solid var(--text-secondary);
+            }
+            .text{
+                padding: 20px;
+                position: absolute;
+                background: var(--bg-transparent);
+                top: 0;
+                bottom: 0;
+                left: 25%;
+                right: 15%;
+                @include skewTransform(-11deg);
+            }
+        }
+    }
 }

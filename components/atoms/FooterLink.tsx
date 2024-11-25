@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import '../../styles/atoms/footerlink.scss';
 
 interface HeaderLinkProps {
   href: string; 

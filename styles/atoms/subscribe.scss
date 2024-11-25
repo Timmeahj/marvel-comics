@@ -1,6 +1,6 @@
 .subscribe{
-    border-left: 1px solid gray;
-    border-right: 1px solid gray;
+    border-left: 1px solid var(--text-tertiary);
+    border-right: 1px solid var(--text-tertiary);
     display: flex;
     align-items: center;
     cursor: pointer;
