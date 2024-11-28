@@ -3,6 +3,7 @@ import '../../styles/organisms/main.scss';
 import iro from '@jaames/iro';
 import { useRef, useEffect, useState } from 'react';
 import { log } from 'console';
+import Comics from './Comics';
 
 const Main: React.FC = () => {
   const [hOffset, setHOffset] = useState(0); 
@@ -170,10 +171,7 @@ const Main: React.FC = () => {
             <div className='main__searchbar col-md-6'>
                 <h5>Choose your featured comic:</h5>
                 <input type="text" id='filter' placeholder='e.g Spiderman'/>
-                <div className='main__results row'>
-                    <div className="col-sm-6 col-md-4"><img src="https://www.comicbookherald.com/wp-content/uploads/2019/03/deepdish-marvel-1024x780.jpg" alt="Comic preview" onClick={changeComic}/></div>
-                    <div className="col-sm-6 col-md-4"><img src="https://media.cnn.com/api/v1/images/stellar/prod/dcvsmarvelomni-adv-rev2-3-copy.jpg?q=w_1110,c_fill" alt="Comic preview" onClick={changeComic} /></div>
-                </div>
+                <Comics comicHandler={changeComic}></Comics>
             </div>
         </div>
     </div>
