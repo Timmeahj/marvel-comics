@@ -10,7 +10,7 @@ const Hero: React.FC = () => {
             <div className='hero__wrapper'>
                 <h1>Your custom Marvel Comic voucher!</h1>
                 <p>Use the interface below to customize your own personal Marvel Comic voucher. Want to keep it for later? Don't forget to save your creation!</p>
-                <Cta href="/" text="Get started" />
+                <Cta href="#editor" text="Get started" />
             </div>
         </div>
     </div>

@@ -2,17 +2,30 @@ import React from 'react';
 import '../../styles/organisms/main.scss';
 import iro from '@jaames/iro';
 import { useRef, useEffect, useState } from 'react';
+import { log } from 'console';
 
 const Main: React.FC = () => {
-  // Step 1: Create a ref for the target div (where the color picker will be attached)
-  const bgColorPickerRef = useRef<HTMLDivElement>(null);
-  const [bgColor, setBgColor] = useState("black");
-  const shadowColorPickerRef = useRef<HTMLDivElement>(null);
-  const [shadowColor, setShadowColor] = useState("gray");
-  const [hOffset, setHOffset] = useState(5); // Start with numeric values (px will be added later)
-  const [vOffset, setVOffset] = useState(8);
-  const [blur, setBlur] = useState(12);
-  const [spread, setSpread] = useState(1);
+  const [hOffset, setHOffset] = useState(0); 
+  const [vOffset, setVOffset] = useState(0);
+  const [blur, setBlur] = useState(25);
+  const [spread, setSpread] = useState(0);
+
+  const [to, setTo] = useState('Jan');
+  const [from, setFrom] = useState("Tim");
+  const [amount, setAmount] = useState("20");
+  const [message, setMessage] = useState("Here ya go buddy!");
+
+  const [selectedComic, setSelectedComic] = useState("https://www.comicbookherald.com/wp-content/uploads/2019/03/deepdish-marvel-1024x780.jpg");
+
+  const changeComic = (event: React.MouseEvent<HTMLImageElement>) => {
+    console.log(event)
+    setSelectedComic(event.target.src);
+  }
+
+  const changeTo = (event: React.ChangeEvent<HTMLInputElement>) => setTo(event.target.value);
+  const changeFrom = (event: React.ChangeEvent<HTMLInputElement>) => setFrom(event.target.value);
+  const changeAmount = (event: React.ChangeEvent<HTMLInputElement>) => setAmount(event.target.value);
+  const changeMessage = (event: React.ChangeEvent<HTMLInputElement>) => setMessage(event.target.value);
 
   const incrementHOffset = () => setHOffset(hOffset + 1);
   const decrementHOffset = () => setHOffset(hOffset - 1);
@@ -26,6 +39,14 @@ const Main: React.FC = () => {
   const incrementSpread = () => setSpread(spread + 1);
   const decrementSpread = () => setSpread(spread - 1);
 
+  // Step 1: Create a ref for the target div (where the color picker will be attached)
+  const bgColorPickerRef = useRef<HTMLDivElement>(null);
+  const [bgColor, setBgColor] = useState("#333");
+  const shadowColorPickerRef = useRef<HTMLDivElement>(null);
+  const [shadowColor, setShadowColor] = useState("#808080");
+  const textColorPickerRef = useRef<HTMLDivElement>(null);
+  const [textColor, setTextColor] = useState("#fff");
+
   // Step 2: Initialize the color picker inside `useEffect` when the component mounts
   useEffect(() => {
     // Step 3: Make sure the target div is available
@@ -33,7 +54,7 @@ const Main: React.FC = () => {
       const bgColorPickerDiv = bgColorPickerRef.current;
 
       // Initialize the iro.js ColorPicker and attach it to the target div
-      const bgColorPicker = new iro.ColorPicker(bgColorPickerDiv, {width: 320,color: "#f00",});
+      const bgColorPicker = new iro.ColorPicker(bgColorPickerDiv, {width: 100,color: "#333",});
 
       bgColorPicker.on('color:change', function(color: iro.Color) {
         setBgColor(color.hexString);
@@ -43,10 +64,20 @@ const Main: React.FC = () => {
         const shadowColorPickerDiv = shadowColorPickerRef.current;
   
         // Initialize the iro.js ColorPicker and attach it to the target div
-        const shadowColorPicker = new iro.ColorPicker(shadowColorPickerDiv, {width: 320,color: "#f00",});
+        const shadowColorPicker = new iro.ColorPicker(shadowColorPickerDiv, {width: 100,color: "#808080",});
 
         shadowColorPicker.on('color:change', function(color: iro.Color) {
             setShadowColor(color.hexString);
+        });
+    }
+    if (textColorPickerRef.current) {
+        const textColorPickerDiv = textColorPickerRef.current;
+  
+        // Initialize the iro.js ColorPicker and attach it to the target div
+        const textColorPicker = new iro.ColorPicker(textColorPickerDiv, {width: 100,color: "#fff",});
+
+        textColorPicker.on('color:change', function(color: iro.Color) {
+            setTextColor(color.hexString);
         });
     }
   }, []); // Empty dependency array to run the effect only once (on mount)
@@ -54,70 +85,95 @@ const Main: React.FC = () => {
   return (
     <div className='container'>
         <div className="main row">
-            <div className='main__comic col-md-12'>
-                <h2>Preview of your current comic voucher:</h2>
-                <div className="main__comic__preview row" style={{backgroundColor: bgColor, boxShadow: `${hOffset}px ${vOffset}px ${blur}px ${spread}px ${shadowColor}`}}>
-                    <div className="col-md-6">
-                        <div className="title">Gift voucher</div>
-                        <div className="to fillable">To: <span>Jan</span></div>
-                        <div className="from fillable">From: <span>Tim</span></div>
-                        <div className="amount fillable">Amount: <span>$20</span></div>
-                    </div>
-                    <div className="col-md-6 image">
-                        <div className="text">Here ya go buddy!</div>
-                        <img src="https://www.comicbookherald.com/wp-content/uploads/2019/03/deepdish-marvel-1024x780.jpg" alt="Comic preview"/>
-                    </div>    
-                </div>
-            </div>
-            <div className="main__editor col-md-12">
+            <div className="main__editor col-md-12 row" id='editor'>
                 <h2>Voucher editor:</h2>
-                <div className="to fillable">To: <input type="text" value={"Jan"} /></div>
-                <div className="from fillable">From: <input type="text" value={"Tim"} /></div>
-                <div className="amount fillable">Amount: <input type="text" value={"20"} /></div>
-                <div className="text fillable">Message: <input type="text" value={"Here ya go buddy!"} /></div>
-                <div className="textColor">Toggle text color: <input type="checkbox" /></div>
-                <div className="bgText">Background color:</div>
-                <div className="bgColorPicker" ref={bgColorPickerRef}></div>
-                <div className="shadowText">Shadow color:</div>
-                <div className="shadowColorPicker" ref={shadowColorPickerRef}></div>
-                <div className="hOffset">
-                    <span>Shadow h-offset: </span>
-                    <button onClick={decrementHOffset}>-</button>
-                    <span>{hOffset}px</span>
-                    <button onClick={incrementHOffset}>+</button>
+                <div className='main__comic col-md-6'>
+                    <h5>Preview:</h5>
+                    <div className="main__comic__preview row" style={{backgroundColor: bgColor ,color: textColor , boxShadow: `${hOffset}px ${vOffset}px ${blur}px ${spread}px ${shadowColor}`}}>
+                        <div className="col-md-6">
+                            <div className="title">Gift voucher</div>
+                            <div className="to fillable" style={{borderColor: textColor}}>To: <span>{to}</span></div>
+                            <div className="from fillable" style={{borderColor: textColor}}>From: <span>{from}</span></div>
+                            <div className="amount fillable" style={{borderColor: textColor}}>Amount: <span>${amount}</span></div>
+                        </div>
+                        <div className="col-md-6 image">
+                            <div className="text" style={{color: "white"}}>{message}</div>
+                            <img src={selectedComic} alt="Comic preview"/>
+                        </div>    
+                    </div>
                 </div>
-
-                <div className="vOffset">
-                    <span>Shadow v-offset: </span>
-                    <button onClick={decrementVOffset}>-</button>
-                    <span>{vOffset}px</span>
-                    <button onClick={incrementVOffset}>+</button>
+                <div className="col-md-6 texts">
+                    <h5>Edit voucher texts:</h5>
+                    <div className="to fillable"><div className='label'>To: </div><input type="text" value={to} onChange={changeTo} /></div>
+                    <div className="from fillable"><div className='label'>From: </div><input type="text" value={from} onChange={changeFrom}/></div>
+                    <div className="amount fillable"><div className='label'>Amount: </div><input type="text" value={amount} onChange={changeAmount}/></div>
+                    <div className="text fillable"><div className='label'>Message: </div><input type="text" value={message} onChange={changeMessage}/></div>
                 </div>
+                <div className="col-md-6 shadows">
+                    <h5>Edit drop shadow:</h5>
+                    <div className="hOffset shadowConfig">
+                        <div className='label'>Shadow h-offset: </div>
+                        <div className="shadowConfigContainer">
+                            <button onClick={decrementHOffset}>-</button>
+                            <div>{hOffset}px</div>
+                            <button onClick={incrementHOffset}>+</button>
+                        </div>
+                    </div>
 
-                <div className="blur">
-                    <span>Shadow blur: </span>
-                    <button onClick={decrementBlur}>-</button>
-                    <span>{blur}px</span>
-                    <button onClick={incrementBlur}>+</button>
+                    <div className="vOffset shadowConfig">
+                        <div className='label'>Shadow v-offset: </div>
+                        <div className="shadowConfigContainer">
+                            <button onClick={decrementVOffset}>-</button>
+                            <div>{vOffset}px</div>
+                            <button onClick={incrementVOffset}>+</button>
+                        </div>
+                    </div>
+
+                    <div className="blur shadowConfig">
+                        <div className='label'>Shadow blur: </div>
+                        <div className="shadowConfigContainer">
+                            <button onClick={decrementBlur}>-</button>
+                            <div>{blur}px</div>
+                            <button onClick={incrementBlur}>+</button>
+                        </div>
+                    </div>
+
+                    <div className="spread shadowConfig">
+                        <div className='label'>Shadow spread: </div>
+                        <div className="shadowConfigContainer">
+                            <button onClick={decrementSpread}>-</button>
+                            <div>{spread}px</div>
+                            <button onClick={incrementSpread}>+</button>
+                        </div>
+                    </div>
                 </div>
-
-                <div className="spread">
-                    <span>Shadow spread: </span>
-                    <button onClick={decrementSpread}>-</button>
-                    <span>{spread}px</span>
-                    <button onClick={incrementSpread}>+</button>
+                <div className="col-md-6 colors row">
+                    <h5>Edit voucher colors:</h5>
+                    <div className="col-sm-4">
+                        <div className="bgText colorText">Background color:</div>
+                        <div className="bgColorPicker colorPicker" ref={bgColorPickerRef}></div>
+                    </div>
+                    <div className="col-sm-4">
+                        <div className="shadowText colorText">Shadow color:</div>
+                        <div className="shadowColorPicker colorPicker" ref={shadowColorPickerRef}></div>
+                    </div>
+                    <div className="col-sm-4">
+                        <div className="textText colorText">Text color:</div>
+                        <div className="textColorPicker colorPicker" ref={textColorPickerRef}></div>
+                    </div>
                 </div>
             </div>
-            <div className='main__searchbar'>
-                <label htmlFor="filter">Find and select your desired comic</label>
-                <input type="text" id='filter' />
+            <div className='main__selectedComic col-md-6'>
+                <h5>Selected Comic:</h5>
+                <img src={selectedComic} alt="your selected comic" />
             </div>
-            <div className='main__results'>
-                <div className="card"><img src="https://www.comicbookherald.com/wp-content/uploads/2019/03/deepdish-marvel-1024x780.jpg" alt="Comic preview" /></div>
-                <div className="card"><img src="https://www.comicbookherald.com/wp-content/uploads/2019/03/deepdish-marvel-1024x780.jpg" alt="Comic preview" /></div>
-                <div className="card"><img src="https://www.comicbookherald.com/wp-content/uploads/2019/03/deepdish-marvel-1024x780.jpg" alt="Comic preview" /></div>
-                <div className="card"><img src="https://www.comicbookherald.com/wp-content/uploads/2019/03/deepdish-marvel-1024x780.jpg" alt="Comic preview" /></div>
-                <div className="card"><img src="https://www.comicbookherald.com/wp-content/uploads/2019/03/deepdish-marvel-1024x780.jpg" alt="Comic preview" /></div>
+            <div className='main__searchbar col-md-6'>
+                <h5>Choose your featured comic:</h5>
+                <input type="text" id='filter' placeholder='e.g Spiderman'/>
+                <div className='main__results row'>
+                    <div className="col-sm-6 col-md-4"><img src="https://www.comicbookherald.com/wp-content/uploads/2019/03/deepdish-marvel-1024x780.jpg" alt="Comic preview" onClick={changeComic}/></div>
+                    <div className="col-sm-6 col-md-4"><img src="https://media.cnn.com/api/v1/images/stellar/prod/dcvsmarvelomni-adv-rev2-3-copy.jpg?q=w_1110,c_fill" alt="Comic preview" onClick={changeComic} /></div>
+                </div>
             </div>
         </div>
     </div>
