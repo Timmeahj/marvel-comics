@@ -20,6 +20,7 @@ const Main: React.FC = () => {
 
   const changeComic = (event: React.MouseEvent<HTMLImageElement>) => {
     console.log(event)
+    //@ts-ignore: TODO fix typing
     setSelectedComic(event.target.src);
   }
 
@@ -94,6 +95,7 @@ const Main: React.FC = () => {
       const bgColorPickerDiv = bgColorPickerRef.current;
 
       // Initialize the iro.js ColorPicker and attach it to the target div
+      //@ts-ignore: TODO fix typing
       const bgColorPicker = new iro.ColorPicker(bgColorPickerDiv, {width: 100,color: "#333",});
 
       bgColorPicker.on('color:change', function(color: iro.Color) {
@@ -104,6 +106,7 @@ const Main: React.FC = () => {
         const shadowColorPickerDiv = shadowColorPickerRef.current;
   
         // Initialize the iro.js ColorPicker and attach it to the target div
+        //@ts-ignore: TODO fix typing
         const shadowColorPicker = new iro.ColorPicker(shadowColorPickerDiv, {width: 100,color: "#808080",});
 
         shadowColorPicker.on('color:change', function(color: iro.Color) {
@@ -114,6 +117,7 @@ const Main: React.FC = () => {
         const textColorPickerDiv = textColorPickerRef.current;
   
         // Initialize the iro.js ColorPicker and attach it to the target div
+        //@ts-ignore: TODO fix typing
         const textColorPicker = new iro.ColorPicker(textColorPickerDiv, {width: 100,color: "#fff",});
 
         textColorPicker.on('color:change', function(color: iro.Color) {
@@ -220,6 +224,7 @@ const Main: React.FC = () => {
                 <img src={selectedComic} alt="your selected comic" />
             </div>
             <div className='main__searchbar col-md-6'>
+                {/* @ts-ignore: TODO fix typing */} 
                 <Comics comicHandler={changeComic}></Comics>
             </div>
         </div>
