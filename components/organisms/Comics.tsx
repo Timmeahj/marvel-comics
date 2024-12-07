@@ -52,7 +52,7 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
     const ts = new Date().getTime().toString();
     const hash = md5(ts + privateKey + publicKey);
 
-    const url = "http://gateway.marvel.com/v1/public/comics";
+    const url = "https://gateway.marvel.com/v1/public/comics";
     const params = new URLSearchParams({
       apikey: publicKey,
       ts,
