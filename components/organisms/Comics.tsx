@@ -47,22 +47,8 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
   };
 
   const fetchComics = async (offset = 0) => {
-    const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY!;
-    const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY!;
-    const ts = new Date().getTime().toString();
-    const hash = md5(ts + privateKey + publicKey);
-
-    const url = "https://gateway.marvel.com/v1/public/comics";
-    const params = new URLSearchParams({
-      apikey: publicKey,
-      ts,
-      hash,
-      offset: offset.toString(),
-      limit: "100",
-    }).toString();
-
     try {
-      const response = await fetch(`${url}?${params}`, {
+      const response = await fetch(`/api/proxy?offset=${offset}&limit=100`, {
         method: "GET",
         headers: { Accept: "*/*" },
       });
@@ -102,7 +88,7 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
 
         // Filter out comics with placeholder image URLs
         const validComics = fetchedComics.filter(
-        // @ts-ignore: TODO fix typing
+          // @ts-ignore: TODO fix typing
           (comic) =>
             comic.thumbnail.path !==
             "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available"
