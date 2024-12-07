@@ -102,6 +102,7 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
 
         // Filter out comics with placeholder image URLs
         const validComics = fetchedComics.filter(
+        // @ts-ignore: TODO fix typing
           (comic) =>
             comic.thumbnail.path !==
             "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available"
