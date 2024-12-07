@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import md5 from "md5";
+import React, { useEffect, useState, useRef } from "react";
 import { openDB } from "idb";
 
 interface ComicHandlerProps {
@@ -15,7 +14,9 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [filterText, setFilterText] = useState<string>(""); // For filtering
+  const [filterText, setFilterText] = useState<string>("");
+
+  const comicsRef = useRef<any[]>([]); // Use this ref to track all comics across rerenders
 
   const initializeDB = async () => {
     const db = await openDB(DATABASE_NAME, 1, {
@@ -94,16 +95,17 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
             "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available"
         );
 
-        // Update state incrementally
-        setComics((prevComics) => {
-          const updatedComics = [...prevComics, ...validComics];
+        // Incrementally add to comicsRef (useRef holds previous data across re-renders)
+        comicsRef.current = [...comicsRef.current, ...validComics];
 
-          // Save incrementally to IndexedDB
-          saveToIndexedDB(updatedComics); // No need to await this here
-          // Now that we have results, stop display loading state
-          setLoading(false);
-          return updatedComics;
-        });
+        // Save incrementally to IndexedDB
+        await saveToIndexedDB(validComics);
+
+        // Update state with the current list of comics after each batch
+        setComics(comicsRef.current);
+
+        // Ensure that the loading state is updated after each batch
+        setLoading(false);
 
         // Render immediately after each batch
         console.log(`Batch ${counter} added: ${validComics.length} comics`);
