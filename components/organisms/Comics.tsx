@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import md5 from 'md5';
+import React, { useEffect, useState } from "react";
+import md5 from "md5";
 import { openDB } from "idb";
 
 interface ComicHandlerProps {
@@ -8,13 +8,15 @@ interface ComicHandlerProps {
 
 const DATABASE_NAME = "MarvelComicsDB";
 const STORE_NAME = "Comics";
+const ITEMS_PER_PAGE = 10;
 
 const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
   const [comics, setComics] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filterText, setFilterText] = useState<string>(""); // For filtering
 
-  // Initialize IndexedDB
   const initializeDB = async () => {
     const db = await openDB(DATABASE_NAME, 1, {
       upgrade(db) {
@@ -26,7 +28,6 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
     return db;
   };
 
-  // Save comics to IndexedDB
   const saveToIndexedDB = async (comics: any[]) => {
     const db = await initializeDB();
     const tx = db.transaction(STORE_NAME, "readwrite");
@@ -36,7 +37,6 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
     await tx.done;
   };
 
-  // Load comics from IndexedDB
   const loadFromIndexedDB = async () => {
     const db = await initializeDB();
     const tx = db.transaction(STORE_NAME, "readonly");
@@ -72,17 +72,15 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
       }
 
       const data = await response.json();
-      return data.data.results; // Return fetched comics
+      return data.data.results;
     } catch (error) {
       setError((error as Error).message);
       return [];
     }
   };
 
-  // Load comics with IndexedDB as the main cache
   const loadComics = async () => {
     try {
-      // First, try loading from IndexedDB
       const cachedComics = await loadFromIndexedDB();
       if (cachedComics.length > 0) {
         setComics(cachedComics);
@@ -90,27 +88,39 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
         return;
       }
 
-      // If no cached comics, fetch from API
-      let allComics: any[] = [];
       let offset = 0;
       let counter = 0;
 
-      // Limit to avoid infinite requests
       while (counter < 20) {
         counter++;
-        console.log("fetch counter: "+counter);
+        console.log(`Fetching batch ${counter}...`);
+
         const fetchedComics = await fetchComics(offset);
+        if (fetchedComics.length === 0) break;
 
-        if (fetchedComics.length === 0) break; // Stop when no more comics are found
-
-        allComics = [...allComics, ...fetchedComics];
         offset += 100;
-      }
 
-      // Save fetched comics to IndexedDB and update state
-      await saveToIndexedDB(allComics);
-      setComics(allComics);
-      setLoading(false);
+        // Filter out comics with placeholder image URLs
+        const validComics = fetchedComics.filter(
+          (comic) =>
+            comic.thumbnail.path !==
+            "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available"
+        );
+
+        // Update state incrementally
+        setComics((prevComics) => {
+          const updatedComics = [...prevComics, ...validComics];
+
+          // Save incrementally to IndexedDB
+          saveToIndexedDB(updatedComics); // No need to await this here
+          // Now that we have results, stop display loading state
+          setLoading(false);
+          return updatedComics;
+        });
+
+        // Render immediately after each batch
+        console.log(`Batch ${counter} added: ${validComics.length} comics`);
+      }
     } catch (err) {
       setError("An error occurred while loading comics");
       setLoading(false);
@@ -118,21 +128,85 @@ const Comics: React.FC<ComicHandlerProps> = ({ comicHandler }) => {
   };
 
   useEffect(() => {
-    loadComics(); // Load comics on component mount
+    loadComics();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterText]);
+
+  // Filter comics based on user input
+  const filteredComics = comics.filter((comic) =>
+    comic.title.toLowerCase().includes(filterText.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredComics.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const displayedComics = filteredComics.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   return (
     <div>
-        {comics.length > 0 ? (
-          <div  className='main__results row'>
-            {comics.map((comic, index) => (
-              <div  className="col-sm-6" key={index}>
-                <img src={`${comic.thumbnail.path}.${comic.thumbnail.extension}`} alt={comic.title} onClick={comicHandler}/>
+      {loading ? (
+        <p>Loading comics...</p>
+      ) : error ? (
+        <p>Error: {error}</p>
+      ) : (
+        <>
+          <h5>Choose your featured comic:</h5>
+          <input
+            type="text"
+            id="filter"
+            placeholder="e.g Spiderman"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)} // Update filterText on input
+          />
+          <div className="main__results row">
+            {displayedComics.map((comic, index) => (
+              <div className="col-sm-6" key={index}>
+                <img
+                  src={`${comic.thumbnail.path}.${comic.thumbnail.extension}`}
+                  alt={comic.title}
+                  onClick={comicHandler}
+                />
               </div>
             ))}
           </div>
-        ) : (
-          <p>Loading comics...</p>
-        )}
+          <div className="pagination">
+            <button
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1}
+              className="btn btn-secondary"
+            >
+              Previous
+            </button>
+            <span className="mx-2">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+              className="btn btn-secondary"
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

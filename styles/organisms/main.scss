@@ -67,6 +67,7 @@
     }
     &__editor{
         margin-bottom: 100px;
+        padding-top: 50px;
         h2{
             margin-bottom: 50px;
         }
@@ -129,7 +130,6 @@
         }
     }
     &__results{
-        margin-bottom: 50px;
         img{
             width: 100%;
             height: 100%;
@@ -144,5 +144,8 @@
             height: 200px;
             margin-bottom: 20px;
         }
+    }
+    .pagination{
+        margin-bottom: 50px;
     }
 }

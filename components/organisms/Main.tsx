@@ -2,8 +2,8 @@ import React from 'react';
 import '../../styles/organisms/main.scss';
 import iro from '@jaames/iro';
 import { useRef, useEffect, useState } from 'react';
-import { log } from 'console';
 import Comics from './Comics';
+import Cta from '../atoms/Cta';
 
 const Main: React.FC = () => {
   const [hOffset, setHOffset] = useState(0); 
@@ -48,6 +48,45 @@ const Main: React.FC = () => {
   const textColorPickerRef = useRef<HTMLDivElement>(null);
   const [textColor, setTextColor] = useState("#fff");
 
+  // Save the current states to localStorage
+  const saveToLocalStorage = () => {
+    const voucherState = {
+      hOffset,
+      vOffset,
+      blur,
+      spread,
+      to,
+      from,
+      amount,
+      message,
+      selectedComic,
+      bgColor,
+      shadowColor,
+      textColor,
+    };
+    localStorage.setItem('voucherState', JSON.stringify(voucherState));
+  };
+
+  // Load the saved states from localStorage
+  useEffect(() => {
+    const savedState = localStorage.getItem('voucherState');
+    if (savedState) {
+      const parsedState = JSON.parse(savedState);
+      setHOffset(parsedState.hOffset);
+      setVOffset(parsedState.vOffset);
+      setBlur(parsedState.blur);
+      setSpread(parsedState.spread);
+      setTo(parsedState.to);
+      setFrom(parsedState.from);
+      setAmount(parsedState.amount);
+      setMessage(parsedState.message);
+      setSelectedComic(parsedState.selectedComic);
+      setBgColor(parsedState.bgColor);
+      setShadowColor(parsedState.shadowColor);
+      setTextColor(parsedState.textColor);
+    }
+  }, []);
+
   // Step 2: Initialize the color picker inside `useEffect` when the component mounts
   useEffect(() => {
     // Step 3: Make sure the target div is available
@@ -87,7 +126,19 @@ const Main: React.FC = () => {
     <div className='container'>
         <div className="main row">
             <div className="main__editor col-md-12 row" id='editor'>
-                <h2>Voucher editor:</h2>
+                <div className="col-md-6">
+                    <h2>Voucher editor:</h2>
+                </div>
+                <div className="col-md-6">
+                    <Cta
+                        href="#editor"
+                        text="Save Voucher"
+                        onClick={(e) => {
+                            e.preventDefault(); // Prevent default anchor behavior
+                            saveToLocalStorage(); // Trigger the save functionality
+                        }}
+                    />
+                </div>
                 <div className='main__comic col-md-6'>
                     <h5>Preview:</h5>
                     <div className="main__comic__preview row" style={{backgroundColor: bgColor ,color: textColor , boxShadow: `${hOffset}px ${vOffset}px ${blur}px ${spread}px ${shadowColor}`}}>
@@ -169,8 +220,6 @@ const Main: React.FC = () => {
                 <img src={selectedComic} alt="your selected comic" />
             </div>
             <div className='main__searchbar col-md-6'>
-                <h5>Choose your featured comic:</h5>
-                <input type="text" id='filter' placeholder='e.g Spiderman'/>
                 <Comics comicHandler={changeComic}></Comics>
             </div>
         </div>
